@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Medical Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="logo">
+        <h2>MedConnect</h2>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#" data-page="dashboard" class="active">Dashboard</a></li>
+        <li><a href="#" data-page="social">Social Posts</a></li>
+        <li><a href="#" data-page="chatbot">AI Assistant</a></li>
+      </ul>
+    </nav>
+
+    <main class="content">
+      <div id="dashboard-page" class="page active">
+        <h1>Welcome, Doctor</h1>
+        <div class="dashboard-grid">
+          <div class="card">
+            <h3>Recent Activity</h3>
+            <p>No recent activities</p>
+          </div>
+          <div class="card">
+            <h3>Quick Actions</h3>
+            <button onclick="navigateTo('social')">New Post</button>
+            <button onclick="navigateTo('chatbot')">Ask AI Assistant</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="social-page" class="page">
+        <h1>Social Posts</h1>
+        <div class="post-form">
+          <textarea id="post-message" placeholder="What's on your mind?"></textarea>
+          <button id="publish-post">Publish Post</button>
+        </div>
+        <div id="posts-container"></div>
+      </div>
+
+      <div id="chatbot-page" class="page">
+        <h1>AI Medical Assistant</h1>
+        <div class="chat-container">
+          <div id="chat-messages"></div>
+          <div class="chat-input">
+            <input type="file" id="file-upload" accept="image/*,.pdf,.doc,.docx" />
+            <textarea id="user-input" placeholder="Ask your medical question..."></textarea>
+            <button id="send-message">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
