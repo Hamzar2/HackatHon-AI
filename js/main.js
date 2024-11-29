@@ -1,9 +1,9 @@
-import { initWeb3 } from './blockchain.js';
-import { initChat } from './chat.js';
 import { initNavigation } from './navigation.js';
+import { initChat } from './chat.js';
+import { initSocial } from './social.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  initNavigation();
-  await initWeb3();
-  initChat();
+document.addEventListener('DOMContentLoaded', () => {
+    initNavigation();
+    initChat();
+    initSocial();
 });

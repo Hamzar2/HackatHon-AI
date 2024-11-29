@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/social.css" />
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
   </head>
   <body>
     <nav class="sidebar">
@@ -31,20 +32,24 @@
           </div>
           <div class="card">
             <h3>Quick Actions</h3>
-            <button onclick="navigateTo('social')">New Post</button>
-            <button onclick="navigateTo('chatbot')">Ask AI Assistant</button>
+            <button onclick="document.querySelector('[data-page=social]').click()">New Post</button>
+            <button onclick="document.querySelector('[data-page=chatbot]').click()">Ask AI Assistant</button>
           </div>
         </div>
       </div>
 
       <div id="social-page" class="page">
         <h1>Social Posts</h1>
-        <div class="post-form">
-          <textarea id="post-message" placeholder="What's on your mind?"></textarea>
-          <button id="publish-post">Publish Post</button>
+        <div class="post-section">
+            <div class="post-form">
+                <!-- Wallet buttons will be dynamically added here -->
+                <textarea id="post-message" placeholder="What's on your mind?"></textarea>
+                <button id="publish-post" disabled>Publish Post</button>
+            </div>
+            <div id="posts-container"></div>
         </div>
-        <div id="posts-container"></div>
       </div>
+    
 
       <div id="chatbot-page" class="page">
         <h1>AI Medical Assistant</h1>
