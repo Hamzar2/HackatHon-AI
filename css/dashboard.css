@@ -5,12 +5,13 @@
   margin-top: 2rem;
 }
 
-.card, .first-card {
+.card {
   background: white;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 
 .card h3, .first-card h3 {
   margin-bottom: 1rem;
@@ -152,4 +153,46 @@ footer {
 a {
   color: #f6851b;
   text-decoration: none;
+}
+
+/* Style for the About Us container */
+/* Style for the About Us container */
+.about {
+  margin: 20px auto;
+  padding: 30px;
+  max-width: 100%;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif; /* Clean and professional font */
+  text-align: center;
+  line-height: 1.8;
+}
+
+/* Styling for the text */
+.platform-purpose {
+  font-size: 20px;
+  color: #333333; /* Dark gray for professional readability */
+  font-weight: 400; /* Regular weight for a clean appearance */
+  overflow: hidden; /* Prevent text overflow during animation */
+  letter-spacing: 0.5px; /* Subtle letter spacing for readability */
+}
+
+/* Fade-in effect for each word */
+.word {
+  opacity: 0;
+  display: inline-block;
+  animation: fade-in 0.5s forwards;
+}
+
+/* Keyframes for word fade-in */
+@keyframes fade-in {
+  from {
+      opacity: 0;
+      transform: translateY(-10px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
 }

@@ -4,12 +4,14 @@
     <title>Medical Dashboard</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="assets\DALLE.webp" type="image/x-icon" />
+    <link rel="icon" href="assets\DALLE.jpg" type="image" />
     <link rel="stylesheet" href="/css/styles.css" />
     <link rel="stylesheet" href="/css/dashboard.css" />
     <link rel="stylesheet" href="/css/social.css" />
     <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
   </head>
   <body>
     <!-- Sidebar -->
@@ -28,15 +30,23 @@
     <main class="content">
       <!-- Dashboard Page -->
       <div id="dashboard-page" class="page active">
-        <h1> <img src="assets\DALLE.webp" alt="Dashboard Icon" class="page-icon modern-image" />
+        <h1> <img src="assets\DALLE.jpg" alt="Dashboard Icon" class="page-icon modern-image" />
           Welcome, Doctor</h1>
-        <div class="first-card">
-          <h3>Quick Actions</h3>
-          <button onclick="document.querySelector('[data-page=social]').click()">HealthSphere</button>
-          <button onclick="document.querySelector('[data-page=chatbot]').click()">MediBot</button>
+          <div class="first-card">
+            <h3>Quick Actions</h3>
+            <div class="buttons-container">
+                <button onclick="document.querySelector('[data-page=social]').click()">HealthSphere</button>
+                <button onclick="document.querySelector('[data-page=chatbot]').click()">MediBot</button>
+            </div>
         </div>
+        
+        <div class="about">
+          <h3 id="platform-purpose" class="platform-purpose"></h3>
+      </div>
+      
         <div class="dashboard-grid">
           <!-- Card 1 -->
+          
           <div class="card">
             <h3>How to Use HealthSphere</h3>
             <div class="container">
@@ -87,8 +97,15 @@
               <div class="guide-step">
                 <img src="https://cdn-icons-png.flaticon.com/512/1038/1038108.png" alt="Tumor Classification Icon">
                 <div>
-                  <h4>Classify Tumor Types</h4>
-                  <p>Upload medical images to classify tumors accurately.</p>
+                  <h4>Classify Tumor and Alzheimer Types</h4>
+                  <p>Upload medical images to classify tumors and Alzheimer accurately.</p>
+                </div>
+              </div>
+              <div class="guide-step">
+                <img src="https://cdn-icons-png.flaticon.com/512/2921/2921222.png" alt="chest X-ray Icon">
+                <div>
+                  <h4>Analyse Chest X-ray images</h4>
+                  <p>Upload medical images to Analyse Chest X-ray images accurately.</p>
                 </div>
               </div>
               <div class="guide-step">
@@ -102,29 +119,27 @@
           </div>
         </div>
         <div class="about-us">
-          <h2>About</h2>
-          <p class="platform-purpose">
-            MedConnect is a platform designed specifically for doctors, providing advanced tools to improve patient care, streamline medical workflows, and enhance collaboration between healthcare professionals.
-          </p>
+          <h2>Team Members</h2>
+          
           
           <div class="team">
             <div class="team-member">
-              <img src="assets\HI.png" alt="Creator 1" />
+              <img src="assets\HI.jpg" alt="Creator 1" />
               <h3>Idrissi Hamza</h3>
               <p><a href="https://www.linkedin.com/in/hamza-idrissi-944b57211/" target="_blank">LinkedIn Profile</a></p>
             </div>
             <div class="team-member">
-              <img src="https://via.placeholder.com/150" alt="Creator 2" />
+              <img src="assets\HD.jpg" alt="Creator 2" />
               <h3>Dahou Hamza</h3>
               <p><a href="https://www.linkedin.com/in/hamzadahou/" target="_blank">LinkedIn Profile</a></p>
             </div>
             <div class="team-member">
-              <img src="https://via.placeholder.com/150" alt="Creator 3" />
+              <img src="assets\HB.jpg" alt="Creator 3" />
               <h3>Boughfir Hamza</h3>
               <p><a href="https://www.linkedin.com/in/hamza-boughfir-0bb646224/" target="_blank">LinkedIn Profile</a></p>
             </div>
             <div class="team-member">
-              <img src="https://via.placeholder.com/150" alt="Creator 4" />
+              <img src="assets\HN.jpg" alt="Creator 4" />
               <h3>Nayah Hafsa</h3>
               <p><a href="https://www.linkedin.com/in/hafsanayah/" target="_blank">LinkedIn Profile</a></p>
             </div>
@@ -135,7 +150,7 @@
 
       <!-- Social Page -->
       <div id="social-page" class="page">
-        <h1><img src="assets\HealthSphere.png" alt="Social Icon" class="page-icon modern-image" />
+        <h1><img src="assets\HealthSphere.jpg" alt="Social Icon" class="page-icon modern-image" />
           HealthSphere</h1>
         <div class="post-section">
           <div class="post-form-container">
@@ -157,29 +172,34 @@
       <div id="chatbot-page" class="page">
         <div class="header-container">
           <h1>
-            <img src="assets/MediBot.jpg" alt="Chatbot Icon" class="page-icon modern-image" />
-            MediBot : AI Medical Assistant
+              <img src="assets/MediBot.jpg" alt="Chatbot Icon" class="page-icon modern-image" />
+              MediBot: AI Medical Assistant
           </h1>
-          <div class="buttons-container">
-            <button id="toggle-instructions">
-              <img src="assets/info-icon.png" alt="Instructions Icon" class="button-icon" />
-              Show Instructions
-            </button>
-            <button id="download-pdf">
-              <img src="assets/download-icon.png" alt="Download Icon" class="button-icon" />
-              Download Chat History as PDF
-            </button>
+          <div class="header-buttons">
+              <button id="toggle-instructions" class="fas fa-bell">
+                  <i class="fas fa-info-circle"></i>
+                  Show Instructions
+              </button>
+              <button id="download-pdf">
+                  <i class="fas fa-download"></i>
+                  Download Chat History as PDF
+              </button>
           </div>
+      </div>
+      
+        <div id="overlay" style="display: none;">
+            <div id="instructions">
+                <p>Here are some tips for using the chat history:</p>
+                <ul>
+                    <li>Tokens are limited to 4000 for the Chat History</li>
+                    <li>After hitting the limit, the interaction with the MediBot will not be stored anymore</li>
+                </ul>
+                <button id="close-instructions">Close</button>
+            </div>
         </div>
-        <div id="instructions" style="display: none;">
-          <p>Here are some tips for using the chat history:</p>
-          <ul>
-            <li>Tokens are limited to 4000 for the Chat History</li>
-            <li>After hitting the limit, the interaction with the MediBot will not be stored anymore</li>
-          </ul>
-        </div>
+        
         <div class="chat-container">
-          <div id="chat-messages"></div>
+          <div id="chat-messages"></p></div>
           <div class="chat-input">
             <input type="file" id="file-upload" accept="image/*,.pdf,.doc,.docx" />
             <textarea id="user-input" placeholder="Ask your medical question..."></textarea>

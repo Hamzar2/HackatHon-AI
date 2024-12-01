@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 
-const API_URL = "https://hackaton-flask-server-1.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL_LOCALHOST;
 
 
 let chatHistory = [];
@@ -170,8 +170,8 @@ export function initChat() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role}`;
 
-        let displayName = role === 'user' ? 'You' :
-                         role === 'assistant' ? 'AI Assistant' :
+        let displayName = role === 'user' ? 'User' :
+                         role === 'assistant' ? 'MediBot:' :
                          'System';
 
         messageDiv.innerHTML = `
@@ -191,7 +191,7 @@ export function initChat() {
             const messageDiv = document.createElement('div');
             messageDiv.className = 'message user';
 
-            const displayName = 'You';
+            const displayName = 'User';
             messageDiv.innerHTML = `
                 <div class="message-content">
                     <strong>${displayName}:</strong>
@@ -205,13 +205,20 @@ export function initChat() {
         reader.readAsDataURL(file);
     }
 
+    // Toggle button to show the notification
     document.getElementById('toggle-instructions').addEventListener('click', () => {
-        const instructionsDiv = document.getElementById('instructions');
-        const isVisible = instructionsDiv.style.display === 'none';
-        instructionsDiv.style.display = isVisible ? 'block' : 'none';
+        const overlay = document.getElementById('overlay');
+        const isVisible = overlay.style.display === 'block';
+        overlay.style.display = isVisible ? 'none' : 'block';
         document.getElementById('toggle-instructions').textContent = isVisible ? 'Show Instructions' : 'Hide Instructions';
     });
-    
+
+    // Close button inside the notification
+    document.getElementById('close-instructions').addEventListener('click', () => {
+        const overlay = document.getElementById('overlay');
+        overlay.style.display = 'none';
+        document.getElementById('toggle-instructions').textContent = 'Show Instructions';
+    });
 
     document.getElementById('download-pdf').addEventListener('click', () => {
         const doc = new jsPDF();
@@ -224,6 +231,28 @@ export function initChat() {
 
         doc.save('chat-history.pdf');
     });
+    // Function to set a static assistant message
+    function setStaticAssistantMessage() {
+        const messageContent = "Hi! I'm MediBot an AI Assistant tasked to help healthcare professionals make informed decisions. Do you have a medical question, case you'd like to discuss, or a project you need help with? Let me know and I'll do my best to provide you with accurate and informative responses.";
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message assistant';
+
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <strong>MediBot:</strong>
+                <p>${messageContent}</p>
+            </div>
+        `;
+
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Call the function to set the static message
+    setStaticAssistantMessage();
+
 
     
 }

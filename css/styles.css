@@ -155,6 +155,7 @@ button:hover {
   background: #fff;
 }
 
+
 .chat-input {
   display: flex;
   align-items: center;
@@ -234,10 +235,13 @@ button:hover {
 
 /* About Us Section */
 .about-us {
-  background-color: #fff;
-  padding: 2rem 1rem;
+  background: white;
+  padding: 1.5rem;
+  text-align:center;
+  gap: 2rem;
   margin-top: 2rem;
-  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .about-us h2 {
@@ -308,105 +312,113 @@ button:hover {
 }
 
 
-
-
-
-#chatbot-page {
-  font-family: Arial, sans-serif;
-  padding: 20px;
+/* Full-screen overlay to disable interactions with the page */
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  z-index: 999; /* Ensure it overlays everything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
+/* Centered modal */
+#instructions {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 400px;
+  max-width: 90%;
+  text-align: left;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+/* List styling */
+#instructions ul {
+  padding-left: 20px;
+}
+
+#instructions ul li {
+  margin-bottom: 10px;
+}
+
+/* Close button styling */
+#instructions button {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#instructions button:hover {
+  background-color: #0056b3;
+}
+
+/* Style the header container */
 .header-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ddd;
 }
 
-.page-icon {
-  width: 50px;
-  height: auto;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-h1 {
+/* Style the h1 element */
+.header-container h1 {
   display: flex;
   align-items: center;
   font-size: 24px;
-  color: #333;
+  margin: 0;
+  font-family: Arial, sans-serif;
 }
 
-.buttons-container {
+/* Style the chatbot image */
+.page-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+/* Align buttons next to the header on the same line */
+.header-buttons {
+  display: flex;
+  gap: 15px; /* Space between buttons */
+}
+
+/* Style the buttons */
+.header-buttons button {
   display: flex;
   align-items: center;
-}
-
-button {
-  background-color: #4CAF50;
-  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
   border: none;
-  padding: 10px 20px;
-  margin-left: 10px;
-  cursor: pointer;
   border-radius: 5px;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-
-button .button-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-}
-
-#instructions {
-  margin-top: 15px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 10px;
-  border-radius: 5px;
-}
-
-.chat-container {
-  margin-top: 20px;
-}
-
-.chat-input {
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-}
-
-textarea {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
-}
-
-input[type="file"] {
-  margin-bottom: 10px;
-}
-
-#send-message {
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
-  padding: 10px 20px;
-  border: none;
   cursor: pointer;
-  border-radius: 5px;
-  font-size: 14px;
+  font-family: Arial, sans-serif;
 }
 
-#send-message:hover {
-  background-color: #45a049;
+.header-buttons button i {
+  margin-right: 5px; /* Space between icon and text */
 }
+
+.header-buttons button:hover {
+  background-color: #0056b3;
+}
+
+
 
