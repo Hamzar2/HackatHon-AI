@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 
-const API_URL = import.meta.env.VITE_API_URL_LOCALHOST;
+const API_URL = "https://hackaton-flask-server-1.onrender.com";
 
 
 let chatHistory = [];
