@@ -1,4 +1,8 @@
-const API_URL = 'http://localhost:5000';
+import { jsPDF } from "jspdf";
+
+const API_URL = import.meta.env.VITE_API_URL_LOCALHOST;
+
+
 let chatHistory = [];
 
 export function initChat() {
@@ -32,23 +36,27 @@ export function initChat() {
     async function handleMessage() {
         const message = userInput.value.trim();
         const files = fileUpload.files;
-    
+
         if (message || files.length > 0) {
+            // Disable send button and user input
+            sendButton.disabled = true;
+            userInput.disabled = true;
+
             appendMessage('user', message);
-    
+
             let classificationMessage = null;
-    
+
             if (files.length > 0) {
                 const imageFile = files[0];
                 appendImage(imageFile);
-    
+
                 // Wait for the classification result
                 classificationMessage = await handleFileUpload(imageFile);
             }
-    
+
             // Add user message to chatHistory
             chatHistory.push({ role: 'user', content: message });
-    
+
             // Combine user message with classification result for the current query
             const currentQuery = [];
             if (classificationMessage) {
@@ -57,15 +65,15 @@ export function initChat() {
             if (message) {
                 currentQuery.push({ role: 'user', content: message });
             }
-    
+
             console.log('Current query sent to backend:', currentQuery);
             console.log('Full chat history:', chatHistory);
-    
+
             userInput.value = '';
             fileUpload.value = '';
-    
+
             const loadingMessage = appendMessage('system', 'Processing your request...');
-    
+
             try {
                 const response = await fetch(`${API_URL}/chat`, {
                     method: 'POST',
@@ -75,34 +83,41 @@ export function initChat() {
                         messages: currentQuery, // Send the current query separately
                     }),
                 });
-            
+
                 if (!response.ok) throw new Error('Network response was not ok');
-            
+
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
                 let assistantMessage = '';
                 let messageDiv = appendMessage('assistant', '');
-            
+
                 while (true) {
                     const { value, done } = await reader.read();
                     if (done) break;
                     const chunk = decoder.decode(value, { stream: true });
                     assistantMessage += chunk;
-            
+
                     const renderedMarkdown = marked.parse(assistantMessage);
                     messageDiv.querySelector('p').innerHTML = renderedMarkdown;
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
-            
+
                 // Add assistant's message to chatHistory
                 chatHistory.push({ role: 'assistant', content: assistantMessage });
                 loadingMessage.remove();
+
+                // Re-enable send button and user input
+                sendButton.disabled = false;
+                userInput.disabled = false;
             } catch (error) {
                 console.error('Error:', error);
                 loadingMessage.remove();
                 appendMessage('system', `Error: ${error.message || 'Unable to process your request.'}`);
+
+                // Re-enable send button and user input in case of an error
+                sendButton.disabled = false;
+                userInput.disabled = false;
             }
-            
         }
     }
 
@@ -110,11 +125,11 @@ export function initChat() {
         const classificationResult = await classifyImage(file);
         if (classificationResult) {
             const classificationMessage = `Image Classification: ${classificationResult.label} (Score: ${classificationResult.score})`;
-    
+
             // Append classification result to chat interface
             const lastUserMessage = chatMessages.querySelectorAll('.message.user');
             const appendedFileMessage = lastUserMessage[lastUserMessage.length - 1];
-    
+
             if (appendedFileMessage) {
                 appendedFileMessage.querySelector('.message-content').innerHTML += `
                     <p>${classificationMessage}</p>
@@ -122,7 +137,7 @@ export function initChat() {
             } else {
                 appendMessage('system', classificationMessage);
             }
-    
+
             // Return classification result for inclusion in the current query
             return classificationMessage;
         }
@@ -155,8 +170,8 @@ export function initChat() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${role}`;
 
-        let displayName = role === 'user' ? 'You' : 
-                         role === 'assistant' ? 'AI Assistant' : 
+        let displayName = role === 'user' ? 'You' :
+                         role === 'assistant' ? 'AI Assistant' :
                          'System';
 
         messageDiv.innerHTML = `
@@ -189,4 +204,26 @@ export function initChat() {
         };
         reader.readAsDataURL(file);
     }
+
+    document.getElementById('toggle-instructions').addEventListener('click', () => {
+        const instructionsDiv = document.getElementById('instructions');
+        const isVisible = instructionsDiv.style.display === 'none';
+        instructionsDiv.style.display = isVisible ? 'block' : 'none';
+        document.getElementById('toggle-instructions').textContent = isVisible ? 'Show Instructions' : 'Hide Instructions';
+    });
+    
+
+    document.getElementById('download-pdf').addEventListener('click', () => {
+        const doc = new jsPDF();
+        let y = 10; // Initial y position for text
+
+        chatHistory.forEach(entry => {
+            doc.text(10, y, `${entry.role}: ${entry.content}`);
+            y += 10; // Move text down for each entry
+        });
+
+        doc.save('chat-history.pdf');
+    });
+
+    
 }

@@ -5,7 +5,7 @@ let postManager;
 
 export async function initSocial() {
     const container = document.getElementById('posts-container');
-    const postForm = document.querySelector('.post-form');
+    const postForm = document.querySelector('.Wallet');
 
     if (!container || !postForm) {
         console.error('Required social elements not found');
@@ -42,19 +42,27 @@ function setupWalletButtons(postForm) {
     // Connect Wallet Logic
     connectButton.addEventListener('click', async () => {
         try {
-            connectButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Connecting...`;
-            const connected = await postManager.init();
+            connectButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting...';
+            const walletAddressInput = document.getElementById('wallet-address'); 
+            const walletAddress = walletAddressInput.value; // Initialize PostManager with wallet address 
+            const connected = await postManager.init(walletAddress);
             if (connected) {
                 connectButton.classList.add('hidden');
                 disconnectButton.classList.remove('hidden');
                 showWalletInfo(connectButton, postManager.account);
                 await postManager.loadPosts();
+                
+                // Ensure .left-section is visible
+                if (document.querySelector('.left-section')) {
+                    document.querySelector('.left-section').style.display = 'block';
+                }
             }
         } catch (error) {
             connectButton.innerHTML = '<i class="fas fa-wallet"></i> Connect Wallet';
             showToast(error.message, 'error');
         }
     });
+    
 
     // Disconnect Wallet Logic
     disconnectButton.addEventListener('click', () => {

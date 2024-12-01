@@ -1,6 +1,6 @@
 import Web3 from 'web3';
-import { CONTRACT_ADDRESS, CONTRACT_ABI } from '../web3/config.js';
-import { showToast, showEditDialog } from '../utils/notifications.js';
+import { CONTRACT_ABI } from '../web3/config.js';
+import { showToast, showEditDialog, showCommentDialog } from '../utils/notifications.js';
 import { formatDistanceToNow } from 'date-fns';
 
 export class PostManager {
@@ -12,40 +12,39 @@ export class PostManager {
         this.isLoading = false;
     }
 
-    async init() {
-        if (window.ethereum) {
-            this.web3 = new Web3(window.ethereum);
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                this.account = this.web3.utils.toChecksumAddress(accounts[0]);
-                this.contract = new this.web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-                
-                // Setup event listeners
-                window.ethereum.on('accountsChanged', (accounts) => this.handleAccountChange(accounts));
-                window.ethereum.on('chainChanged', () => window.location.reload());
-                
-                return true;
-            } catch (error) {
-                showToast('Failed to connect wallet: ' + error.message, 'error');
-                return false;
-            }
-        } else {
-            showToast('Please install MetaMask', 'warning');
-            return false;
-        }
+    async init(address) { 
+        if (window.ethereum) { 
+            this.web3 = new Web3(window.ethereum); 
+        try { 
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); 
+            this.account = this.web3.utils.toChecksumAddress(accounts[0]); 
+            this.contract = new this.web3.eth.Contract(CONTRACT_ABI, address); 
+            // Setup event listeners 
+            window.ethereum.on('accountsChanged', (accounts) => this.handleAccountChange(accounts)); 
+            window.ethereum.on('chainChanged', () => window.location.reload()); 
+            
+            return true; 
+        } catch (error) { 
+            showToast('Failed to connect wallet: ' + error.message, 'error'); 
+            return false; } 
+        } else { 
+            showToast('Please install MetaMask', 'warning'); 
+            return false; 
+        } 
     }
+
 
     async handleAccountChange(accounts) {
-        if (accounts.length === 0) {
-            this.account = null;
-            showToast('Please connect to MetaMask', 'warning');
-        } else {
-            this.account = this.web3.utils.toChecksumAddress(accounts[0]);
-            showToast('Account changed successfully', 'success');
-            await this.loadPosts();
-        }
+                if (accounts.length === 0) {
+                    this.account = null;
+                    showToast('Please connect to MetaMask', 'warning');
+                } else {
+                    this.account = this.web3.utils.toChecksumAddress(accounts[0]);
+                    showToast('Account changed successfully', 'success');
+                    await this.loadPosts();
+                }
     }
-
+        
     async loadPosts() {
         if (!this.contract) return;
     
@@ -59,15 +58,18 @@ export class PostManager {
     
             for (let i = totalPosts - 1; i >= 0; i--) {
                 const post = await this.contract.methods.getPost(i).call();
+                const comments = await this.loadComments(i); // Load comments for each post
     
                 posts.push({
                     index: i,
                     message: post[0],
-                    author: post[1],
-                    timestamp: Number(post[2]) * 1000, // Convert BigInt to Number
-                    lastModified: Number(post[3]) * 1000, // Convert BigInt to Number
-                    likes: Number(post[4]), // Convert BigInt to Number
-                    dislikes: Number(post[5]) // Convert BigInt to Number
+                    imageUrl: post[1], // Include the image URL
+                    author: post[2],
+                    timestamp: Number(post[3]) * 1000, // Convert BigInt to Number
+                    lastModified: Number(post[4]) * 1000, // Convert BigInt to Number
+                    likes: Number(post[5]), // Convert BigInt to Number
+                    dislikes: Number(post[6]), // Convert BigInt to Number
+                    comments: comments // Add comments to the post
                 });
             }
     
@@ -78,25 +80,74 @@ export class PostManager {
             this.isLoading = false;
         }
     }
-    
 
-    async publishPost(content) {
-        if (!content.trim()) {
+    async loadComments(postIndex) {
+        try {
+            const totalComments = await this.contract.methods.getCommentsCount(postIndex).call();
+            const comments = [];
+    
+            for (let i = 0; i < totalComments; i++) {
+                const comment = await this.contract.methods.getComment(postIndex, i).call();
+    
+                comments.push({
+                    message: comment[0],
+                    author: comment[1],
+                    timestamp: Number(comment[2]) * 1000, // Convert BigInt to Number
+                    likes: Number(comment[3]), // Convert BigInt to Number
+                    dislikes: Number(comment[4]) // Convert BigInt to Number
+                });
+            }
+    
+            return comments;
+        } catch (error) {
+            showToast('Failed to load comments: ' + error.message, 'error');
+            return [];
+        }
+    }
+
+    async publishPost() {
+        const content = document.getElementById('post-message').value.trim();
+        const imageInput = document.getElementById('post-image');
+        const file = imageInput.files[0];
+        let imageUrl = '';
+
+        if (!content && !file) {
             showToast('Post content cannot be empty', 'warning');
             return;
         }
 
-        try {
-            await this.contract.methods.publishPost(content)
-                .send({ from: this.account });
-            showToast('Post published successfully!', 'success');
-            await this.loadPosts();
-        } catch (error) {
-            if (error.code === 4001) {
-                showToast('Transaction cancelled by user', 'info');
-            } else {
-                showToast('Failed to publish post: ' + error.message, 'error');
-            }
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                imageUrl = reader.result;
+
+                this.contract.methods.publishPost(content, imageUrl).send({ from: this.account })
+                    .then(async () => {
+                        showToast('Post published successfully!', 'success');
+                        await this.loadPosts();
+                    })
+                    .catch(error => {
+                        if (error.code === 4001) {
+                            showToast('Transaction cancelled by user', 'info');
+                        } else {
+                            showToast('Failed to publish post: ' + error.message, 'error');
+                        }
+                    });
+            };
+            reader.readAsDataURL(file); // Convert image to Base64 string
+        } else {
+            this.contract.methods.publishPost(content, imageUrl).send({ from: this.account })
+                .then(async () => {
+                    showToast('Post published successfully!', 'success');
+                    await this.loadPosts();
+                })
+                .catch(error => {
+                    if (error.code === 4001) {
+                        showToast('Transaction cancelled by user', 'info');
+                    } else {
+                        showToast('Failed to publish post: ' + error.message, 'error');
+                    }
+                });
         }
     }
 
@@ -122,6 +173,13 @@ export class PostManager {
                         await this.contract.methods.editPost(index, newContent)
                             .send({ from: this.account });
                         showToast('Post updated successfully!', 'success');
+                    }
+                    break;
+
+                case 'comment':
+                    const commentContent = await showCommentDialog();
+                    if (commentContent) {
+                        await this.addComment(index, commentContent);
                     }
                     break;
             }
@@ -153,6 +211,9 @@ export class PostManager {
         const isAuthor = post.author.toLowerCase() === this.account?.toLowerCase();
         
         return `
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+        
             <div class="post" data-index="${post.index}">
                 <div class="post-header">
                     <span class="author">
@@ -165,7 +226,11 @@ export class PostManager {
                     </span>
                 </div>
                 
-                <div class="post-content">${post.message}</div>
+                <div class="post-content">
+                    ${post.message}
+                </div>
+                
+                ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Post image" class="post-image">` : ''}
                 
                 <div class="post-actions">
                     <button class="action-btn like-btn" data-action="like">
@@ -182,6 +247,10 @@ export class PostManager {
                             Edit
                         </button>
                     ` : ''}
+                    <button class="action-btn comment-btn" data-action="comment">
+                        <i class="fas fa-comment-alt"></i>
+                        Comment
+                    </button>
                 </div>
                 
                 ${post.lastModified > post.timestamp ? `
@@ -190,7 +259,21 @@ export class PostManager {
                         Edited ${formatDistanceToNow(post.lastModified)} ago
                     </div>
                 ` : ''}
+
+                <div class="comments">
+                    ${post.comments.map(comment => `
+                        <div class="comment">
+                            <div class="comment-header">
+                                <span class="author">${comment.author.slice(0, 6)}...${comment.author.slice(-4)}</span>
+                                <span class="timestamp">${formatDistanceToNow(comment.timestamp)} ago</span>
+                            </div>
+                            <div class="comment-content">${comment.message}</div>
+                        </div>
+                    `).join('')}
+                </div>
             </div>
+
+        
         `;
     }
 
@@ -206,15 +289,37 @@ export class PostManager {
         });
     }
 
-    // Method to clear posts
+    async addComment(postIndex, comment) {
+        if (!comment.trim()) {
+            showToast('Comment content cannot be empty', 'warning');
+            return;
+        }
+
+        try {
+            await this.contract.methods.addComment(postIndex, comment)
+                .send({ from: this.account });
+            showToast('Comment added successfully!', 'success');
+            await this.loadPosts();
+        } catch (error) {
+            if (error.code === 4001) {
+                showToast('Transaction cancelled by user', 'info');
+            } else {
+                showToast('Failed to add comment: ' + error.message, 'error');
+            }
+        }
+    }
+
+    disconnect() {
+        this.account = null;
+        this.contract = null;
+        this.clearPosts();
+        document.getElementById('connect-wallet').classList.remove('hidden');
+        document.getElementById('disconnect-wallet').classList.add('hidden');
+        showToast('Disconnected successfully', 'info');
+    }
+
     clearPosts() {
         this.container.innerHTML = ''; // Remove all posts from the container
     }
-
-    // Updated disconnect method
-    disconnect() {
-        this.account = null;
-        this.contract = null; // Optionally nullify the contract instance if needed
-        this.clearPosts(); // Clean up the displayed posts
-    }
-}
+    
+} 
