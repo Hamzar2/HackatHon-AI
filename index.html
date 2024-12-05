@@ -21,8 +21,8 @@
       </div>
       <ul class="nav-links">
         <li><a href="#" data-page="dashboard" class="active">Dashboard</a></li>
-        <li><a href="#" data-page="social">HealthSphere</a></li>
         <li><a href="#" data-page="chatbot">MediBot</a></li>
+        <li><a href="#" data-page="social">HealthSphere</a></li>
       </ul>
     </nav>
 
@@ -35,8 +35,8 @@
           <div class="first-card">
             <h3>Quick Actions</h3>
             <div class="buttons-container">
-                <button onclick="document.querySelector('[data-page=social]').click()">HealthSphere</button>
-                <button onclick="document.querySelector('[data-page=chatbot]').click()">MediBot</button>
+              <button onclick="document.querySelector('[data-page=chatbot]').click()">MediBot</button>
+              <button onclick="document.querySelector('[data-page=social]').click()">HealthSphere</button>
             </div>
         </div>
         
@@ -47,42 +47,7 @@
         <div class="dashboard-grid">
           <!-- Card 1 -->
           
-          <div class="card">
-            <h3>How to Use HealthSphere</h3>
-            <div class="container">
-              <div class="step">
-                <img src="https://cdn-icons-png.flaticon.com/512/811/811372.png" alt="MetaMask Icon">
-                <div>
-                  <h4>Step 1: Install MetaMask</h4>
-                  <p>
-                    Download the <a href="https://metamask.io/" target="_blank">MetaMask</a>
-                    extension or mobile app and create a wallet.
-                  </p>
-                </div>
-              </div>
-              <div class="step">
-                <img src="https://cdn-icons-png.flaticon.com/512/158/158412.png" alt="Add Funds Icon">
-                <div>
-                  <h4>Step 2: Fund Your Wallet</h4>
-                  <p>Add cryptocurrency to your wallet using an exchange or transfer from another wallet.</p>
-                </div>
-              </div>
-              <div class="step">
-                <img src="https://cdn-icons-png.flaticon.com/512/4321/4321052.png" alt="Deploy Contract Icon">
-                <div>
-                  <h4>Step 3: Deploy Your Smart Contract</h4>
-                  <p>Use an online tool like <a href="https://remix.ethereum.org/" target="_blank">Remix IDE</a> to write and deploy your smart contract.</p>
-                </div>
-              </div>
-              <div class="step">
-                <img src="https://cdn-icons-png.flaticon.com/512/833/833594.png" alt="Copy Address Icon">
-                <div>
-                  <h4>Step 4: Get the Contract Address</h4>
-                  <p>Copy the contract address after deployment and use it to interact with your application.</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          
           <!-- Card 2 -->
           <div class="card">
             <h3>How to Use the AI Medical Assistant</h3>
@@ -118,6 +83,42 @@
             </div>
           </div>
         </div>
+        <div class="card">
+          <h3>How to Use HealthSphere</h3>
+          <div class="container">
+            <div class="step">
+              <img src="https://cdn-icons-png.flaticon.com/512/811/811372.png" alt="MetaMask Icon">
+              <div>
+                <h4>Step 1: Install MetaMask</h4>
+                <p>
+                  Download the <a href="https://metamask.io/" target="_blank">MetaMask</a>
+                  extension or mobile app and create a wallet.
+                </p>
+              </div>
+            </div>
+            <div class="step">
+              <img src="https://cdn-icons-png.flaticon.com/512/158/158412.png" alt="Add Funds Icon">
+              <div>
+                <h4>Step 2: Fund Your Wallet</h4>
+                <p>Add cryptocurrency to your wallet using an exchange or transfer from another wallet.</p>
+              </div>
+            </div>
+            <div class="step">
+              <img src="https://cdn-icons-png.flaticon.com/512/4321/4321052.png" alt="Deploy Contract Icon">
+              <div>
+                <h4>Step 3: Deploy Your Smart Contract</h4>
+                <p>Use an online tool like <a href="https://remix.ethereum.org/" target="_blank">Remix IDE</a> to write and deploy your smart contract.</p>
+              </div>
+            </div>
+            <div class="step">
+              <img src="https://cdn-icons-png.flaticon.com/512/833/833594.png" alt="Copy Address Icon">
+              <div>
+                <h4>Step 4: Get the Contract Address</h4>
+                <p>Copy the contract address after deployment and use it to interact with your application.</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="about-us">
           <h2>Team Members</h2>
           
@@ -146,26 +147,6 @@
           </div>
         </div>
         
-      </div>
-
-      <!-- Social Page -->
-      <div id="social-page" class="page">
-        <h1><img src="assets\HealthSphere.jpg" alt="Social Icon" class="page-icon modern-image" />
-          HealthSphere</h1>
-        <div class="post-section">
-          <div class="post-form-container">
-            <div class="Wallet">
-              <p>Smart Contract Address:</p>
-              <input type="text" id="wallet-address" placeholder="Enter your wallet address here..." />
-            </div>
-            <div class="post-form">
-              <textarea id="post-message" placeholder="Type your post here..."></textarea>
-              <input type="file" id="post-image" accept="image/*" />
-              <button id="publish-post">Publish Post</button>
-            </div>
-          </div>
-          <div id="posts-container" class="posts-container"></div>
-        </div>
       </div>
 
       <!-- Chatbot Page -->
@@ -207,7 +188,25 @@
           </div>
         </div>
       </div>
-      
+      <!-- Social Page -->
+      <div id="social-page" class="page">
+        <h1><img src="assets\HealthSphere.jpg" alt="Social Icon" class="page-icon modern-image" />
+          HealthSphere</h1>
+        <div class="post-section">
+          <div class="post-form-container">
+            <div class="Wallet">
+              <p>Smart Contract Address:</p>
+              <input type="text" id="wallet-address" placeholder="Enter your wallet address here..." />
+            </div>
+            <div class="post-form">
+              <textarea id="post-message" placeholder="Type your post here..."></textarea>
+              <input type="file" id="post-image" accept="image/*" />
+              <button id="publish-post">Publish Post</button>
+            </div>
+          </div>
+          <div id="posts-container" class="posts-container"></div>
+        </div>
+      </div>
     </main>
 
     <script type="module" src="/js/main.js"></script>

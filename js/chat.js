@@ -1,6 +1,6 @@
 import { jsPDF } from "jspdf";
 
-const API_URL = "https://hackaton-flask-server-1.onrender.com";
+const API_URL = import.meta.env.VITE_API_URL_LOCALHOST;
 
 
 let chatHistory = [];
@@ -220,17 +220,82 @@ export function initChat() {
         document.getElementById('toggle-instructions').textContent = 'Show Instructions';
     });
 
-    document.getElementById('download-pdf').addEventListener('click', () => {
-        const doc = new jsPDF();
-        let y = 10; // Initial y position for text
+    document.getElementById('download-pdf').addEventListener('click', async () => {
+    const doc = new jsPDF();
+    let y = 20; // Initial y position for text
+    const lineHeight = 6;
+    const pageHeight = doc.internal.pageSize.height;
+    const logo = 'data:image/jpeg;base64,...'; // Replace with your base64 encoded JPG logo
 
-        chatHistory.forEach(entry => {
-            doc.text(10, y, `${entry.role}: ${entry.content}`);
-            y += 10; // Move text down for each entry
-        });
+    // Adding a title
+    doc.setFontSize(16);
+    doc.text(10, y, 'Chat History');
+    y += 10; // Adding some space after the title
 
-        doc.save('chat-history.pdf');
-    });
+    // Setting font size for the chat content
+    doc.setFontSize(12);
+
+    for (const entry of chatHistory) {
+        // Adding logo to the top right corner of each page
+        const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+        if (currentPage > 1) {
+            doc.addImage(logo, 'JPEG', doc.internal.pageSize.width - 60, 10, 50, 20);
+        }
+
+        if (entry.role === 'user' && entry.content.includes('data:image')) {
+            // Handle image entries
+            const img = entry.content.match(/data:image\/[a-zA-Z]+;base64,[^\s]+/)[0];
+            const imgProps = doc.getImageProperties(img);
+            const imgHeight = (imgProps.height * 50) / imgProps.width;
+
+            if (y + imgHeight > pageHeight - 10) { // Check if image fits on current page
+                doc.addPage();
+                y = 10;
+                doc.addImage(logo, 'JPEG', doc.internal.pageSize.width - 60, 10, 50, 20); // Adding logo to new page
+            }
+
+            doc.addImage(img, 'PNG', 10, y, 50, imgHeight); // Add image to the PDF
+            y += imgHeight + 10; // Move y position down to accommodate the image
+        } else {
+            // Handle text entries
+            doc.setFont("helvetica", entry.role === 'user' ? "bold" : "normal");
+            const lines = doc.splitTextToSize(entry.content.replace(/[\*\_\`]/g, ''), 180); // Splitting text into multiple lines if it's too long
+
+            lines.forEach(line => {
+                if (y + lineHeight > pageHeight - 10) { // Check if text fits on current page
+                    doc.addPage();
+                    y = 10;
+                    doc.addImage(logo, 'JPEG', doc.internal.pageSize.width - 60, 10, 50, 20); // Adding logo to new page
+                }
+                doc.text(10, y, line);
+                y += lineHeight;
+            });
+
+            y += 4; // Adding some space between entries
+        }
+
+        if (entry.classificationResult) {
+            // Add classification result
+            doc.setFont("helvetica", "italic");
+            const classificationText = `Classification: ${entry.classificationResult.label}, Score: ${entry.classificationResult.score}`;
+
+            if (y + lineHeight > pageHeight - 10) { // Check if text fits on current page
+                doc.addPage();
+                y = 10;
+                doc.addImage(logo, 'JPEG', doc.internal.pageSize.width - 60, 10, 50, 20); // Adding logo to new page
+            }
+
+            doc.text(10, y, classificationText);
+            y += 10;
+        }
+    }
+
+    doc.save('chat-history.pdf');
+});
+
+    
+    
+    
     // Function to set a static assistant message
     function setStaticAssistantMessage() {
         const messageContent = "Hi! I'm MediBot an AI Assistant tasked to help healthcare professionals make informed decisions. Do you have a medical question, case you'd like to discuss, or a project you need help with? Let me know and I'll do my best to provide you with accurate and informative responses.";
